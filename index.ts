@@ -1,15 +1,12 @@
 import { withUiHook, htm } from "@zeit/integration-utils";
+import { getPageContent } from "./views/getPageContent";
 
-let count = 0;
-
-export default withUiHook(async ({ payload, zeitClient }) => {
-  count += 1;
+export default withUiHook(async options => {
+  const page = await getPageContent(options);
 
   return htm`
     <Page>
-      <Button>Count Me</Button>
-    <button>hello</button>
-      ${count}
+        ${page}
     </Page>
   `;
 });
