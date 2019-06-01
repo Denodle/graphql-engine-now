@@ -32,10 +32,6 @@ export const Table = ({
 export const TableRow = ({ children }: { children: any }) => html`
   <Box
     display="table-row"
-    borderColor="#eaeaea"
-    borderStyle="solid"
-    borderBottomWidth="1px"
-    backgroundColor="white"
   >
     ${children}
   </Box>
@@ -55,5 +51,14 @@ export const HeaderItem = ({ children }: { children: any }) => html`
 `;
 
 export const BodyItem = ({ children }: { children: any }) => html`
-  <Box display="table-cell" padding="10px">${children}</Box>
+  <Box
+    display="table-cell"
+    padding="10px"
+    borderColor="#eaeaea"
+    borderStyle="solid"
+    borderWidth="0px"
+    borderBottomWidth="1px"
+  >
+    ${children}
+  </Box>
 `;

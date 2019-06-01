@@ -2,16 +2,17 @@ import { HandlerOptions, htm as html } from "@zeit/integration-utils";
 import { Table, HeaderItem, TableRow, BodyItem } from "../components/Table";
 import { Header } from "../components/Header";
 import { Description } from "../components/Description";
+import { Project } from "../interfaces/Project";
 
 export const getListView = async ({ payload, zeitClient }: HandlerOptions) => {
 
   const metadata = await zeitClient.getMetadata();
   metadata.projects = metadata.projects || [];
 
-  let projects: any[] = [];
+  let projects: Project[] = [];
 
   for (let project of metadata.projects){
-    const projectInfoFromApi = await zeitClient.fetchAndThrow(`/v1/projects/${(project as any).id}`, {});
+    const projectInfoFromApi = await zeitClient.fetchAndThrow(`/v1/projects/${project.id}`, {});
     projects = [ ...projects, {...project, api: { ...projectInfoFromApi } } ]
   }
 
@@ -32,11 +33,21 @@ export const getListView = async ({ payload, zeitClient }: HandlerOptions) => {
         <${Table} header=${html`
             <${HeaderItem}>PROJECT</${HeaderItem}>
             <${HeaderItem}>HOSTED AT</${HeaderItem}>
+            <${HeaderItem}></${HeaderItem}>
         `}>
-          ${projects.map((project: any) => html`
+          ${projects.map(project => html`
             <${TableRow}>
               <${BodyItem}>${project.api.name}</${BodyItem}>
               <${BodyItem}>${project.type}</${BodyItem}>
+              <${BodyItem}>
+                <Box display="flex" justifyContent="flex-end" position="relative">
+                  <Link action=${"dashboard:" + project.id} display="flex">
+                    <Box display="flex" position="absolute" height="12px" top="2px" right="5px">
+                      <Img src="https://i.imgur.com/Qka4bHW.png" width="22" height="22" />
+                    </Box>
+                  </Link>
+                </Box>
+              </${BodyItem}>
             </${TableRow}>
           `)}
         </${Table}>
