@@ -1,0 +1,5 @@
+{
+  "name": "graphql-engine-now",
+  "version": 2,
+  "builds": [{ "src": "index.ts", "use": "@now/node" }]
+}

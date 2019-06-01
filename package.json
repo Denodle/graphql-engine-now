@@ -1,0 +1,6 @@
+{
+  "name": "graphql-engine-now",
+  "dependencies": {
+    "@zeit/integration-utils": "latest"
+  }
+}
