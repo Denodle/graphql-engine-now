@@ -4,6 +4,10 @@ import { Project } from "../interfaces/Project";
 export const getDashboardView = async ({ payload, zeitClient }: HandlerOptions, project: Project) => {
 
     const getConsoleUrl = (url: string) => {
+        if(!url) {
+            return null;
+        }
+
         if(url[url.length - 1] === '/') {
             return url + 'console';
         }
