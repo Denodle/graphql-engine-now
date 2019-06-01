@@ -7,6 +7,7 @@ import { getDashboardView } from "./dashboard";
 import { Project } from "../interfaces/Project";
 import { getProject } from "../lib/zeit";
 import { getShowSecretView } from "./show-secret";
+import { destroy } from "../actions/destoy";
 
 export const getPageContent = async (options: HandlerOptions) => {
 
@@ -24,6 +25,13 @@ export const getPageContent = async (options: HandlerOptions) => {
     const project: Project = await getProject(projectId, options);
 
     return await getShowSecretView(options, project);
+  }
+
+  if (action.startsWith('destroy:')) {
+    const projectId = action.substring(8);
+    const project: Project = await getProject(projectId, options);
+
+    return await destroy(project, options);
   }
 
   switch(action){

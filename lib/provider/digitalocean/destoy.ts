@@ -3,7 +3,7 @@ import { Project } from "../../../interfaces/Project";
 
 const BASE_URL = "https://api.digitalocean.com/v2";
 
-export const destroy = async (token: string, project: Project) => {
+export const destroyDigitalocean = async (token: string, project: Project) => {
 
     try {
         const responseAllDroplets = await fetch(`${BASE_URL}/droplets`, {
@@ -26,9 +26,9 @@ export const destroy = async (token: string, project: Project) => {
             }
         });
         const json = await response.json();
-        return json;
+        return true;
     } catch (e) {
-        throw new Error(e.message);
+        return false;
     }
 
 };

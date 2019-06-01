@@ -8,7 +8,7 @@ interface CreateConfig {
     size: string;
 }
 
-export const setup = async (token: string, project: Project, config: CreateConfig) => {
+export const setupDigitalocean = async (token: string, project: Project, config: CreateConfig) => {
 
     try {
         const response = await fetch(`${BASE_URL}/droplets`, {
@@ -25,9 +25,10 @@ export const setup = async (token: string, project: Project, config: CreateConfi
             })
         });
         const json = await response.json();
-        return json;
+
+        return true;
     } catch (e) {
-        throw new Error(e.message);
+        return false;
     }
 
 };
