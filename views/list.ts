@@ -6,7 +6,7 @@ import { Project } from "../interfaces/Project";
 
 export const getListView = async ({ payload, zeitClient }: HandlerOptions) => {
 
-  const metadata = await zeitClient.getMetadata();
+  let metadata = await zeitClient.getMetadata();
   metadata.projects = metadata.projects || [];
 
   let projects: Project[] = [];

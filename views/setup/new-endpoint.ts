@@ -69,7 +69,7 @@ export const getSetupNewView = async ({ payload, zeitClient }: HandlerOptions, s
 
             const metadata = await zeitClient.getMetadata();
             metadata.projects = metadata.projects || [];
-            metadata.projects = [...metadata.projects, { id: clientState.project, type: provider.name } ];
+            metadata.projects = [...metadata.projects, { id: clientState.project, type: provider.name, created: false } ];
             await zeitClient.setMetadata(metadata);
 
             return getListView({ payload, zeitClient });

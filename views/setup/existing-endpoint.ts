@@ -24,7 +24,7 @@ export const getSetupExistingView = async ({ payload, zeitClient }: HandlerOptio
 
             const metadata = await zeitClient.getMetadata();
             metadata.projects = metadata.projects || [];
-            metadata.projects = [...metadata.projects, { id: clientState.project, type: 'Self hosted' } ];
+            metadata.projects = [...metadata.projects, { id: clientState.project, type: 'Self hosted', created: true } ];
             await zeitClient.setMetadata(metadata);
 
             return getListView({ payload, zeitClient });
