@@ -1,9 +1,97 @@
-import { htm as html } from "@zeit/integration-utils";
+import { htm as html, HandlerOptions } from "@zeit/integration-utils";
+import { getListView } from "../list";
 
-export const getSetupExistingView = async () => {
+export const getSetupExistingView = async ({ payload, zeitClient }: HandlerOptions, submit: boolean = false) => {
+
+    let errors = '';
+
+    const projects = await zeitClient.fetchAndThrow(`/v1/projects/list`, {});
+
+    if(submit) {
+
+        const { clientState } = payload;
+
+        if (clientState.url === '' || clientState.secret === '' || clientState.project === ''){
+            errors = 'Sorry, you have to enter all required information!';
+        } else {
+            const urlSecret = await zeitClient.ensureSecret(`graphql_url`, clientState.url);
+            const adminSecret = await zeitClient.ensureSecret(`graphql_admin`, clientState.secret);
+
+
+            console.log(clientState.project);
+
+            await zeitClient.upsertEnv(clientState.project, `GRAPHQL_URL`, urlSecret);
+            await zeitClient.upsertEnv(clientState.project, `GRAPHQL_ADMIN_SECRET`, adminSecret);
+
+
+
+            const metadata = await zeitClient.getMetadata();
+            metadata.projects = metadata.projects || [];
+            metadata.projects = [...metadata.projects, { id: clientState.project, type: 'Self hosted' } ];
+            await zeitClient.setMetadata(metadata);
+
+            return getListView({ payload, zeitClient });
+        }
+
+        //errors = 'Sorry, we were not able to connect to your existing GraphQL Engine! Check entered data and try again.';
+    }
+
     return html`
     <Box>
-        Hello World
+        ${errors !== '' ? html`<Notice type="error">${errors}</Notice>` : ''}
+        <Fieldset>
+            <FsContent>
+                <H2>Adding an existing endpoint</H2>
+                <Box marginBottom="10px">
+                    By completing the form below, you will add an existing GraphQL Engine to the list of endpoints.
+                </Box>
+            </FsContent>
+        </Fieldset>
+        <Fieldset>
+            <FsContent>
+                <H2>Project</H2>
+                <Box marginBottom="10px">
+                    Choose a project you want to associate your endpoint with.
+                </Box>
+                <Select name="project" value=${projects[0].id || ''}>
+                    ${projects.map((project: any) => html`
+                        <Option value=${project.id} caption=${project.name} />
+                    `)}
+                </Select>
+            </FsContent>
+            <FsFooter>
+                <P>We will only expose your GraphQL Engine to the selected project.</P>
+            </FsFooter>
+        </Fieldset>
+        <Fieldset>
+            <FsContent>
+                <H2>Endpoint URL</H2>
+                <Box marginBottom="10px">
+                    Existing GraphQL Engine's endpoint URL
+                </Box>
+                <Input name="url" value="" />
+            </FsContent>
+            <FsFooter>
+                <P>URL will be used to connect to your existing GraphQL Engine and will be exposed to your application as an environment variable.</P>
+            </FsFooter>
+        </Fieldset>
+        <Fieldset>
+            <FsContent>
+                <H2>Admin secret</H2>
+                <Box marginBottom="10px">
+                    Valid admin secret which is used to login into GraphQL Engine
+                </Box>
+                <Input name="secret" value="" />
+            </FsContent>
+            <FsFooter>
+                <P>We will use your admin secret to manage your GraphQL Engine.</P>
+            </FsFooter>
+        </Fieldset>
+        <Fieldset>
+            <FsContent>
+                <Button action="setup-existing-endpoint-submit">Add an existing endpoint</Button>
+            </FsContent>
+        </Fieldset>
     </Box>
   `;
 };

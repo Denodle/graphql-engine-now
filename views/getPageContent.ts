@@ -9,7 +9,9 @@ export const getPageContent = async (options: HandlerOptions) => {
     case 'setup-initial':
       return await getSetupInitialView();
     case 'setup-existing-endpoint':
-      return await getSetupExistingView();
+      return await getSetupExistingView(options);
+    case 'setup-existing-endpoint-submit':
+      return await getSetupExistingView(options, true);
     default:
       return await getListView(options);
   }
