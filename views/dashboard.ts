@@ -8,7 +8,7 @@ export const getDashboardView = async ({ payload, zeitClient }: HandlerOptions, 
           <FsContent>
               <H2>Dashboard</H2>
               <Box>
-                  Here you can quickly access all required information and execute configure your endpoint.
+                  Here you can quickly access all required information and configure your endpoint.
               </Box>
           </FsContent>
       </Fieldset>
