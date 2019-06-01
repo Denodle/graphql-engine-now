@@ -1,6 +1,7 @@
 {
   "name": "graphql-engine-now",
   "dependencies": {
-    "@zeit/integration-utils": "latest"
+    "@zeit/integration-utils": "latest",
+    "generate-password": "^1.4.1"
   }
 }
