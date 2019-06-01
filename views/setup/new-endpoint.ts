@@ -84,7 +84,7 @@ export const getSetupNewView = async ({ payload, zeitClient }: HandlerOptions, s
             <Fieldset>
                 <FsContent>
                     <H2>Adding an existing endpoint</H2>
-                    <Box marginBottom="10px">
+                    <Box>
                         By completing the form below, you will add an existing GraphQL Engine to the list of endpoints.
                     </Box>
                 </FsContent>

@@ -6,6 +6,7 @@ import { getSetupExistingView } from "./setup/existing-endpoint";
 import { getDashboardView } from "./dashboard";
 import { Project } from "../interfaces/Project";
 import { getProject } from "../lib/zeit";
+import { getShowSecretView } from "./show-secret";
 
 export const getPageContent = async (options: HandlerOptions) => {
 
@@ -16,6 +17,13 @@ export const getPageContent = async (options: HandlerOptions) => {
     const project: Project = await getProject(projectId, options);
 
     return await getDashboardView(options, project);
+  }
+
+  if (action.startsWith('show-secret:')) {
+    const projectId = action.substring(12);
+    const project: Project = await getProject(projectId, options);
+
+    return await getShowSecretView(options, project);
   }
 
   switch(action){

@@ -17,9 +17,6 @@ export const getSetupExistingView = async ({ payload, zeitClient }: HandlerOptio
             const urlSecret = await zeitClient.ensureSecret(`graphql_url`, clientState.url);
             const adminSecret = await zeitClient.ensureSecret(`graphql_admin`, clientState.secret);
 
-
-            console.log(clientState.project);
-
             await zeitClient.upsertEnv(clientState.project, `GRAPHQL_URL`, urlSecret);
             await zeitClient.upsertEnv(clientState.project, `GRAPHQL_ADMIN_SECRET`, adminSecret);
 
@@ -42,7 +39,7 @@ export const getSetupExistingView = async ({ payload, zeitClient }: HandlerOptio
         <Fieldset>
             <FsContent>
                 <H2>Adding an existing endpoint</H2>
-                <Box marginBottom="10px">
+                <Box>
                     By completing the form below, you will add an existing GraphQL Engine to the list of endpoints.
                 </Box>
             </FsContent>
@@ -81,7 +78,7 @@ export const getSetupExistingView = async ({ payload, zeitClient }: HandlerOptio
                 <Box marginBottom="10px">
                     Valid admin secret which is used to login into GraphQL Engine
                 </Box>
-                <Input name="secret" value="" />
+                <Input name="secret" value="" type="password" />
             </FsContent>
             <FsFooter>
                 <P>We will use your admin secret to manage your GraphQL Engine.</P>

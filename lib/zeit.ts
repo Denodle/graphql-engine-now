@@ -9,6 +9,8 @@ export const getProject = async (id: string, options: HandlerOptions) => {
 
     if(projectFromMetadata){
         const projectInfoFromApi = await options.zeitClient.fetchAndThrow(`/v1/projects/${id}`, {});
+        const env = await options.zeitClient.fetchAndThrow(`/v1/projects/${id}/env`, {});
+        console.log(env);
         return { ...projectFromMetadata, api: { ...projectInfoFromApi } };
     }
 
