@@ -10,10 +10,10 @@ export const setup = async (project: Project, options: HandlerOptions, config: a
 
     switch (project.type) {
         case 'Self hosted':
-            const urlSecret = await options.zeitClient.ensureSecret(`graphql_url`, options.payload.clientState.url);
-            const adminSecret = await options.zeitClient.ensureSecret(`graphql_admin`, options.payload.clientState.secret);
-            await options.zeitClient.upsertEnv(options.payload.clientState.project, `GRAPHQL_URL`, urlSecret);
-            await options.zeitClient.upsertEnv(options.payload.clientState.project, `GRAPHQL_ADMIN_SECRET`, adminSecret);
+            const urlSecret = await options.zeitClient.ensureSecret('graphql-url', project.url);
+            const passwordSecret = await options.zeitClient.ensureSecret('graphql-secret', project.secret);
+            await options.zeitClient.upsertEnv(project.id, `GRAPHQL_URL`, urlSecret);
+            await options.zeitClient.upsertEnv(project.id, `GRAPHQL_SECRET`, passwordSecret);
 
             metadata.projects = [...metadata.projects, { ...project } ];
             break;
