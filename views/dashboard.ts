@@ -2,6 +2,15 @@ import { htm as html, HandlerOptions } from "@zeit/integration-utils";
 import { Project } from "../interfaces/Project";
 
 export const getDashboardView = async ({ payload, zeitClient }: HandlerOptions, project: Project) => {
+
+    const getConsoleUrl = (url: string) => {
+        if(url[url.length - 1] === '/') {
+            return url + 'console';
+        }
+
+        return url + '/console';
+    };
+
     return html`
     <Box>
       <Fieldset>
@@ -16,7 +25,7 @@ export const getDashboardView = async ({ payload, zeitClient }: HandlerOptions, 
           <FsContent>
               <H2>Console</H2>
               <P>GraphQL Engine's console is a powerful tool to manage your API. To access the console you need admin secret which can be found <Link action=${'show-secret:' + project.id}>here</Link>.</P>
-              <Link target="_blank" href="http://..."><Button action=${'dashboard:' + project.id}>Open console</Button></Link>
+              <Link target="_blank" href=${getConsoleUrl(project.url)}><Button action=${'dashboard:' + project.id}>Open console</Button></Link>
           </FsContent>
       </Fieldset>
       <Fieldset>

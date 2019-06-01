@@ -20,11 +20,9 @@ export const getSetupExistingView = async ({ payload, zeitClient }: HandlerOptio
             await zeitClient.upsertEnv(clientState.project, `GRAPHQL_URL`, urlSecret);
             await zeitClient.upsertEnv(clientState.project, `GRAPHQL_ADMIN_SECRET`, adminSecret);
 
-
-
             const metadata = await zeitClient.getMetadata();
             metadata.projects = metadata.projects || [];
-            metadata.projects = [...metadata.projects, { id: clientState.project, type: 'Self hosted', created: true } ];
+            metadata.projects = [...metadata.projects, { id: clientState.project, type: 'Self hosted', created: true, url: clientState.url, secret: clientState.secret } ];
             await zeitClient.setMetadata(metadata);
 
             return getListView({ payload, zeitClient });
