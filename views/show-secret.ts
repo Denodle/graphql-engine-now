@@ -13,7 +13,7 @@ export const getShowSecretView = async ({ payload, zeitClient }: HandlerOptions,
               <Input value="123456789" disabled />
           </FsContent>
           <FsFooter>
-            <P>Please keep this secret as this key gives complete control over your database!</P>
+            <P>Please keep this secret as it gives complete control over your database!</P>
             </FsFooter>
       </Fieldset>
         <Fieldset>
