@@ -2,6 +2,10 @@
   "name": "graphql-engine-now",
   "dependencies": {
     "@zeit/integration-utils": "latest",
-    "generate-password": "^1.4.1"
+    "generate-password": "^1.4.1",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.3.4"
   }
 }

@@ -1,0 +1,33 @@
+import fetch from "node-fetch";
+import { Project } from "../../../interfaces/Project";
+
+const BASE_URL = "https://api.digitalocean.com/v2";
+
+interface CreateConfig {
+    region: string;
+    size: string;
+}
+
+export const setup = async (token: string, project: Project, config: CreateConfig) => {
+
+    try {
+        const response = await fetch(`${BASE_URL}/droplets`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                name: 'Hasura-' + project.api.name,
+                region: config.region,
+                size: config.size,
+                image: "hasura-18-04"
+            })
+        });
+        const json = await response.json();
+        return json;
+    } catch (e) {
+        throw new Error(e.message);
+    }
+
+};
