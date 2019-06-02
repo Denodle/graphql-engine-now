@@ -16,7 +16,7 @@ export const setupHeroku = async (token: string, project: Project, config: Creat
             uppercase: false,
         })
 
-        const respions = await fetch(`${BASE_URL}/app-setups`, {
+        await fetch(`${BASE_URL}/app-setups`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

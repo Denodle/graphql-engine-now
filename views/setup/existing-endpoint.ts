@@ -1,6 +1,8 @@
 import { htm as html, HandlerOptions } from "@zeit/integration-utils";
 import { setup } from "../../actions/setup";
 import { listOfPossibleProjects } from "../../lib/zeit";
+import { checkSecret } from "../../checks/secret";
+import { checkHealth } from "../../checks/health";
 
 export const getSetupExistingView = async ({ payload, zeitClient }: HandlerOptions, submit: boolean = false) => {
 
@@ -8,18 +10,17 @@ export const getSetupExistingView = async ({ payload, zeitClient }: HandlerOptio
 
     const projects = await listOfPossibleProjects({ payload, zeitClient });
 
-    if(submit) {
+    const clientState = submit ? payload.clientState : {};
+    if (submit) {
+        const project = { id: clientState.project, type: 'Self hosted', created: true, url: clientState.url, secret: clientState.secret, api: { name: '' }, apiKey: '' };
 
-        const { clientState } = payload;
-
-        if (clientState.url === '' || clientState.secret === '' || clientState.project === ''){
+        if (clientState.url === '' || clientState.secret === '' || clientState.project === '') {
             errors = 'Sorry, you have to enter all required information!';
+        } else if (!await checkHealth(project) || !await checkSecret(project)) {
+            errors = 'Sorry, we were not able to connect to your existing GraphQL Engine! Check entered data and try again.';
         } else {
-            const project = { id: clientState.project, type: 'Self hosted', created: true, url: clientState.url, secret: clientState.secret, api: { name: '' }, apiKey: '' };
             return await setup(project, { payload, zeitClient }, {});
         }
-
-        //errors = 'Sorry, we were not able to connect to your existing GraphQL Engine! Check entered data and try again.';
     }
 
     return html`
@@ -39,7 +40,7 @@ export const getSetupExistingView = async ({ payload, zeitClient }: HandlerOptio
                 <Box marginBottom="10px">
                     Choose a project you want to associate your endpoint with.
                 </Box>
-                <Select name="project" value=${projects[0].id || ''}>
+                <Select name="project" value=${clientState.project || projects[0].id}>
                     ${projects.map((project: any) => html`
                         <Option value=${project.id} caption=${project.name} />
                     `)}
@@ -55,7 +56,7 @@ export const getSetupExistingView = async ({ payload, zeitClient }: HandlerOptio
                 <Box marginBottom="10px">
                     Existing GraphQL Engine's endpoint URL
                 </Box>
-                <Input name="url" value="" />
+                <Input name="url" value=${clientState.url || ''} />
             </FsContent>
             <FsFooter>
                 <P>URL will be used to connect to your existing GraphQL Engine and will be exposed to your application as an environment variable.</P>
