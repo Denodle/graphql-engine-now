@@ -13,7 +13,7 @@ export const getListView = async ({ payload, zeitClient }: HandlerOptions) => {
 
   for (let project of metadata.projects){
     const projectInfoFromApi = await zeitClient.fetchAndThrow(`/v1/projects/${project.id}`, {});
-    projects = [ ...projects, {...project, api: { ...projectInfoFromApi } } ]
+    projects = [ ...projects, { ...project, api: { name: projectInfoFromApi.name } } ]
   }
 
   return html`
