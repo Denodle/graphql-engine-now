@@ -25,7 +25,7 @@ export const getShowFAQView = async (projectId: string) => {
                   <Box marginBottom="10px">You can add data by connecting to your GraphQL Engine's console. </Box>
 
                   <B>5. How to add event triggers using Zeit functions?</B>
-                  <Box marginBottom="10px">You can add event triggers though GraphQL Engine's console. Keep in mind, you will have to deploy your functions first.</Box>
+                  <Box marginBottom="10px">You can add event triggers through GraphQL Engine's console. Keep in mind, you will have to deploy your functions first.</Box>
 
                   <B>6. How to add remote schemas?</B>
                   <Box marginBottom="10px">You can do it through GraphQL Engine's console.</Box>
