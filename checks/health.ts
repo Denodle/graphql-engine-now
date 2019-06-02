@@ -9,7 +9,7 @@ export const checkHealth = async (project: Project) => {
             method: "GET"
         });
 
-        return response.status === 200;
+        return response.status === 200 && await response.text() === 'OK';
     } catch (e) {
         return false;
     }
