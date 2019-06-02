@@ -43,7 +43,7 @@ export const getListView = async ({ payload, zeitClient }: HandlerOptions) => {
                 <Box display="flex" justifyContent="flex-end" position="relative">
                   <Link action=${"dashboard:" + project.id} display="flex">
                     <Box display="flex" position="absolute" height="12px" top="2px" right="5px">
-                      <Img src="https://i.imgur.com/Qka4bHW.png" width="22" height="22" />
+                      ${project.created ? html`<Img src="https://i.imgur.com/Qka4bHW.png" width="22" height="22" />` : html`<P>Creating...</P>`}
                     </Box>
                   </Link>
                 </Box>
