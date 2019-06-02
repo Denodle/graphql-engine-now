@@ -2,6 +2,7 @@ import fetch from "node-fetch";
 import { Project } from "../../../interfaces/Project";
 import { HandlerOptions } from "@zeit/integration-utils";
 import { updateProject } from "../../zeit";
+import { getUrl } from "../../url";
 
 const BASE_URL = "https://api.heroku.com";
 
@@ -23,7 +24,7 @@ export const postSetupHeroku = async (project: Project, options: HandlerOptions)
         if (app) {
             const newProject = { ...project, url: app.web_url, created: true };
 
-            const urlSecret = await options.zeitClient.ensureSecret('graphql-url', newProject.url);
+            const urlSecret = await options.zeitClient.ensureSecret('graphql-url', getUrl(newProject.url, 'v1/graphql'));
             await options.zeitClient.upsertEnv(project.id, `GRAPHQL_URL`, urlSecret);
 
             await updateProject(newProject, options);

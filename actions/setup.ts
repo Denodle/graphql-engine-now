@@ -5,6 +5,7 @@ import generator from 'generate-password';
 import { setupDigitalocean } from "../lib/provider/digitalocean/setup";
 import { updateProject, addProject } from "../lib/zeit";
 import { setupHeroku } from "../lib/provider/heroku/setup";
+import { getUrl } from "../lib/url";
 
 export const setup = async (project: Project, options: HandlerOptions, config: any) => {
 
@@ -25,7 +26,7 @@ export const setup = async (project: Project, options: HandlerOptions, config: a
 
     switch (project.type) {
         case 'Self hosted':
-            const urlSecret = await options.zeitClient.ensureSecret('graphql-url', project.url);
+            const urlSecret = await options.zeitClient.ensureSecret('graphql-url', getUrl(project.url, 'v1/graphql'));
             const passwordSecretSelf = await options.zeitClient.ensureSecret('graphql-secret', project.secret);
             await options.zeitClient.upsertEnv(project.id, `GRAPHQL_URL`, urlSecret);
             await options.zeitClient.upsertEnv(project.id, `GRAPHQL_SECRET`, passwordSecretSelf);
