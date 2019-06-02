@@ -1,77 +1,21 @@
 import { htm as html, HandlerOptions } from "@zeit/integration-utils";
 import { Project } from "../../interfaces/Project";
 import { setup } from "../../actions/setup";
-import { regionsDigitalocean } from "../../lib/provider/digitalocean/regions";
-import { typesDigitalocean } from "../../lib/provider/digitalocean/types";
+import { providerFields } from "../../actions/provider-fields";
 
 export const getSetupProviderView = async ({ payload, zeitClient }: HandlerOptions, project: Project, submit: boolean = false) => {
 
     let errors = '';
 
-    let regions = [];
-    switch(project.type){
-        case 'DigitalOcean':
-            regions = await regionsDigitalocean(project.apiKey);
-            break;
-    }
-
-    let types: any = [];
-    switch (project.type) {
-        case 'DigitalOcean':
-            types = await typesDigitalocean(project.apiKey);
-            break;
-    }
-
-    console.log(regions, types);
-
     const providers = [
-        {
-            name: 'DigitalOcean',
-            html: html`
-                <Fieldset>
-                    <FsContent>
-                        <H2>Server type</H2>
-                        <Box marginBottom="10px">
-                            You will be able to change this later.
-                        </Box>
-                        <Select name="size" value=${types[0].slug || ''}>
-                            ${types.map(({slug, ram, cpu, storage}: any) => html`
-                                <Option value=${slug} caption=${ram +' RAM; '+ cpu +'vCPU; '+ storage+ 'GB'} />
-                            `)}
-                        </Select>
-                    </FsContent>
-                    <FsFooter>
-                        <P>DigitalOcean charges different rates for every server type.</P>
-                    </FsFooter>
-                </Fieldset>
-
-                <Fieldset>
-                    <FsContent>
-                        <H2>Region</H2>
-                        <Box marginBottom="10px">
-                            This is the region where your server will be hosted.
-                        </Box>
-                        <Select name="region" value=${regions.map(({ slug }: any) => slug)[0] || ''}>
-                            ${regions.map(({name, slug}: any) => html`
-                                <Option value=${slug} caption=${name} />
-                            `)}
-                        </Select>
-                    </FsContent>
-                    <FsFooter>
-                        <P>Choose the one most closest to you for optimal latency.</P>
-                    </FsFooter>
-                </Fieldset>
-            `,
-        },
+        'DigitalOcean',
     ];
-
-    const provider = providers.find((provider) => provider.name === project.type);
 
     if(submit) {
 
         const { clientState } = payload;
 
-        if (!provider) {
+        if (!providers.includes(project.type)) {
             errors = 'Provider not found!';
         } else if (clientState.size === '' || clientState.region === '') {
             errors = 'Sorry, you have to enter all required information!';
@@ -94,7 +38,7 @@ export const getSetupProviderView = async ({ payload, zeitClient }: HandlerOptio
                 </FsContent>
             </Fieldset>
 
-            ${provider && provider.html}
+            ${await providerFields(project)}
 
             <Fieldset>
                 <FsContent>
