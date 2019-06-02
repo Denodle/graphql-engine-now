@@ -1,6 +1,7 @@
 import { htm as html, HandlerOptions } from "@zeit/integration-utils";
 import { Project } from "../../interfaces/Project";
 import { getSetupProviderView } from "./provider";
+import { updateProject } from "../../lib/zeit";
 
 export const getSetupProviderApiView = async ({ payload, zeitClient }: HandlerOptions, project: Project, submit: boolean = false) => {
 
@@ -13,12 +14,8 @@ export const getSetupProviderApiView = async ({ payload, zeitClient }: HandlerOp
         if (clientState['api-key'] === '') {
             errors = 'Sorry, you have to enter all required information!';
         } else {
-            project = {...project, apiKey: clientState['api-key']};
-
-            const metadata = await zeitClient.getMetadata();
-            metadata.projects = metadata.projects.filter(({id}: Project) => id !== project.id)
-            metadata.projects = [...metadata.projects, { ...project }];
-            await zeitClient.setMetadata(metadata);
+            project = { ...project, apiKey: clientState['api-key'] };
+            await updateProject(project, { payload, zeitClient });
 
             return getSetupProviderView({ payload, zeitClient }, project);
         }

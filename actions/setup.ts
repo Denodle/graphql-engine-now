@@ -3,11 +3,9 @@ import { getListView } from "../views/list";
 import { HandlerOptions } from "@zeit/integration-utils";
 import generator from 'generate-password';
 import { setupDigitalocean } from "../lib/provider/digitalocean/setup";
+import { updateProject, addProject } from "../lib/zeit";
 
 export const setup = async (project: Project, options: HandlerOptions, config: any) => {
-
-    const metadata = await options.zeitClient.getMetadata();
-    metadata.projects = metadata.projects || [];
 
     switch (project.type) {
         case 'Self hosted':
@@ -16,7 +14,7 @@ export const setup = async (project: Project, options: HandlerOptions, config: a
             await options.zeitClient.upsertEnv(project.id, `GRAPHQL_URL`, urlSecret);
             await options.zeitClient.upsertEnv(project.id, `GRAPHQL_SECRET`, passwordSecretSelf);
 
-            metadata.projects = [...metadata.projects, { ...project } ];
+            await addProject(project, options);
             break;
 
         case 'DigitalOcean':
@@ -30,12 +28,9 @@ export const setup = async (project: Project, options: HandlerOptions, config: a
             await setupDigitalocean(project.apiKey, project, config);
 
             const newProject = { ...project, secret: adminSecret };
-            metadata.projects = metadata.projects.filter((p: Project) => p.id !== project.id);
-            metadata.projects = [...metadata.projects, { ...newProject }];
+            await updateProject(newProject, options);
             break;
     }
-
-    await options.zeitClient.setMetadata(metadata);
 
     return getListView(options);
 }

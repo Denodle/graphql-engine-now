@@ -5,7 +5,7 @@ import { getSetupNewView } from "./setup/new-endpoint";
 import { getSetupExistingView } from "./setup/existing-endpoint";
 import { getDashboardView } from "./dashboard";
 import { Project } from "../interfaces/Project";
-import { getProject } from "../actions/get-project";
+import { getProject } from "../lib/zeit";
 import { getShowSecretView } from "./show-secret";
 import { destroy } from "../actions/destoy";
 import { getSetupProviderView } from "./setup/provider";

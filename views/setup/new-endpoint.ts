@@ -1,7 +1,7 @@
 import { htm as html, HandlerOptions } from "@zeit/integration-utils";
 import { Project } from "../../interfaces/Project";
 import { getSetupProviderApiView } from "./provider-api";
-import { listOfPossibleProjects } from "../../lib/zeit";
+import { listOfPossibleProjects, addProject } from "../../lib/zeit";
 
 export const getSetupNewView = async ({ payload, zeitClient }: HandlerOptions, submit: boolean = false) => {
 
@@ -23,10 +23,7 @@ export const getSetupNewView = async ({ payload, zeitClient }: HandlerOptions, s
             errors = 'Your chosen provider is invalid!';
         } else {
             const project: Project = { id: clientState.project, type: clientState.provider, created: false, api: { name: '' }, apiKey: '', url: '', secret: '' };
-            const metadata = await zeitClient.getMetadata();
-            metadata.projects = metadata.projects || [];
-            metadata.projects = [...metadata.projects, project ];
-            await zeitClient.setMetadata(metadata);
+            await addProject(project, { payload, zeitClient });
 
             return getSetupProviderApiView({ payload, zeitClient }, project);
         }
