@@ -10,15 +10,9 @@ import { getShowSecretView } from "./show-secret";
 import { destroy } from "../actions/destroy";
 import { getSetupProviderView } from "./setup/provider";
 import { getSetupProviderApiView } from "./setup/provider-api";
-import { regionsHeroku } from "../lib/provider/heroku/regions";
+import { getShowFAQView } from "./show-faq";
 
 export const getPageContent = async (options: HandlerOptions) => {
-
-
-    // const metadata = await options.zeitClient.getMetadata();
-    // metadata.projects = [];
-    // await options.zeitClient.setMetadata(metadata);
-
 
   const { action } = options.payload;
 
@@ -34,6 +28,12 @@ export const getPageContent = async (options: HandlerOptions) => {
     const project: Project = await getProject(projectId, options);
 
     return await getShowSecretView(options, project);
+  }
+
+  if (action.startsWith('show-faq:')) {
+    const projectId = action.substring(9);
+
+    return await getShowFAQView(projectId);
   }
 
   if (action.startsWith('destroy:')) {
