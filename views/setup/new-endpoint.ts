@@ -1,6 +1,7 @@
 import { htm as html, HandlerOptions } from "@zeit/integration-utils";
-import { getListView } from "../list";
 import generator from 'generate-password';
+import { Project } from "../../interfaces/Project";
+import { getSetupProviderApiView } from "./provider-api";
 
 export const getSetupNewView = async ({ payload, zeitClient }: HandlerOptions, submit: boolean = false) => {
 
@@ -9,70 +10,32 @@ export const getSetupNewView = async ({ payload, zeitClient }: HandlerOptions, s
     const projects = await zeitClient.fetchAndThrow(`/v1/projects/list`, {});
 
     const providers = [
-        {
-            name: 'DigitalOcean',
-            key: 'digital-ocean',
-            disabled: false,
-            html: html`
-                <Fieldset>
-                    <FsContent>
-                        <H2>Public API key</H2>
-                        <Box marginBottom="10px">
-                            Your public API key provided by DigitalOcean.
-                        </Box>
-                        <Input name="provider-public-api-key" value="" />
-                    </FsContent>
-                </Fieldset>
-            `,
-        },
-        // {
-        //     name: 'Docker',
-        //     key: 'docker',
-        //     disabled: true,
-        // },
-        // {
-        //     name: 'Microsoft azure',
-        //     key: 'microsoft-azure',
-        //     disabled: true,
-        // },
-        // {
-        //     name: 'AWS',
-        //     key: 'aws',
-        //     disabled: true,
-        // },
-        // {
-        //     name: 'Google Cloud',
-        //     key: 'google-cloud',
-        //     disabled: true,
-        // },
+        'DigitalOcean',
     ];
 
     if(submit) {
 
         const { clientState } = payload;
 
-        const provider = providers.find(({key}) => clientState.provider === key);
-        if (clientState.url === '' || clientState.project === '' || clientState.provider === ''){
+        if (clientState.project === '' || clientState.provider === ''){
             errors = 'Sorry, you have to enter all required information!';
-        } else if (!provider) {
+        } else if (!providers.includes(clientState.provider)) {
             errors = 'Your chosen provider is invalid!';
         } else {
-            const urlSecret = await zeitClient.ensureSecret(`graphql_url`, clientState.url);
             const adminSecret = generator.generate({
                 length: 16,
                 numbers: true,
             });
 
-            await zeitClient.upsertEnv(clientState.project, `GRAPHQL_URL`, urlSecret);
             await zeitClient.upsertEnv(clientState.project, `GRAPHQL_ADMIN_SECRET`, adminSecret);
 
-
+            const project: Project = { id: clientState.project, type: clientState.provider, created: false, api: { name: '' }, apiKey: '' };
             const metadata = await zeitClient.getMetadata();
             metadata.projects = metadata.projects || [];
-            metadata.projects = [...metadata.projects, { id: clientState.project, type: provider.name, created: false } ];
+            metadata.projects = [...metadata.projects, project ];
             await zeitClient.setMetadata(metadata);
 
-            return getListView({ payload, zeitClient });
+            return getSetupProviderApiView({ payload, zeitClient }, project);
         }
 
         //errors = 'Sorry, we were not able to connect to your existing GraphQL Engine! Check entered data and try again.';
@@ -80,12 +43,18 @@ export const getSetupNewView = async ({ payload, zeitClient }: HandlerOptions, s
 
     return html`
         <Box>
+            <Fieldset>
+                <FsContent>
+                    <H1>1. Create new endpoint</H1>
+                </FsContent>
+            </Fieldset>
+
             ${errors !== '' ? html`<Notice type="error">${errors}</Notice>` : ''}
             <Fieldset>
                 <FsContent>
-                    <H2>Adding an existing endpoint</H2>
+                    <H2>Adding a new endpoint</H2>
                     <Box>
-                        By completing the form below, you will add an existing GraphQL Engine to the list of endpoints.
+                        By completing the form below, you will add a new GraphQL Engine to the list of endpoints.
                     </Box>
                 </FsContent>
             </Fieldset>
@@ -107,32 +76,20 @@ export const getSetupNewView = async ({ payload, zeitClient }: HandlerOptions, s
             </Fieldset>
             <Fieldset>
                 <FsContent>
-                    <H2>Endpoint URL</H2>
-                    <Box marginBottom="10px">
-                        Existing GraphQL Engine's endpoint URL
-                    </Box>
-                    <Input name="url" value="" />
-                </FsContent>
-                <FsFooter>
-                    <P>URL will be used to connect to your existing GraphQL Engine and will be exposed to your application as an environment variable.</P>
-                </FsFooter>
-            </Fieldset>
-            <Fieldset>
-                <FsContent>
                     <H2>Provider</H2>
                     <Box marginBottom="10px">
                         Choose an available provider for your project.
                     </Box>
-                    <Select name="provider" value=${providers[0].key || ''}>
-                        ${providers.map((provider: any) => html`
-                            <Option value=${provider.key} caption=${provider.name} />
+                    <Select name="provider" value=${providers[0] || ''}>
+                        ${providers.map((provider) => html`
+                            <Option value=${provider} caption=${provider} />
                         `)}
                     </Select>
                 </FsContent>
             </Fieldset>
             <Fieldset>
                 <FsContent>
-                    <Button action="setup-new-endpoint-submit">Create a new endpoint</Button>
+                    <Button action="setup-new-endpoint-submit">Next</Button>
                 </FsContent>
             </Fieldset>
         </Box>

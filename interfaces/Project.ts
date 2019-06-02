@@ -3,6 +3,7 @@ export interface Project {
     type: string;
     created: boolean;
     api: {
-        name: string
+        name: string;
     };
+    apiKey: string;
 }
