@@ -2,5 +2,18 @@
   "name": "graphql-engine-now",
   "version": 2,
   "builds": [{ "src": "index.ts", "use": "@now/node" }],
-  "alias": "graphqlnow.tech"
+  "alias": "graphqlnow.tech",
+  "routes": [
+    {
+      "src": "/integration",
+      "dest": "index.ts"
+    },
+    {
+      "src": "/",
+      "status": 301,
+      "headers": {
+        "Location": "https://zeit.co/integrations/graphql-engine"
+      }
+    }
+  ]
 }
