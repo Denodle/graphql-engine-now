@@ -27,6 +27,9 @@ export const postSetupDigitalocean = async (project: Project, options: HandlerOp
             metadata.projects = metadata.projects.filter((p: Project) => p.id !== project.id);
             metadata.projects = [...metadata.projects, { ...newProject }];
 
+            const urlSecret = await options.zeitClient.ensureSecret('graphql-url', newProject.url);
+            await options.zeitClient.upsertEnv(project.id, `GRAPHQL_URL`, urlSecret);
+
             await options.zeitClient.setMetadata(metadata);
 
             return true;
