@@ -56,9 +56,11 @@ export const getSetupInitialView = async (options: HandlerOptions) => {
                 <${Header}>New endpoint</${Header}>
                 <Box marginBottom="20px">
                     <${Description}>
-                        Sorry, you have no projects which could be associated with new GraphQL Engine. Try creating new project, or remove old endpoint before trying again.
+                        Sorry, you have no projects which could be associated with new GraphQL Engine. Try creating new project or remove old endpoint before trying again.
                     </${Description}>
                 </Box>
+                
+                <Button action="">Back to endpoints</Button>
             </Box>
         </Box>
     `;
