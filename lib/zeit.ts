@@ -19,12 +19,14 @@ export const getProject = async (id: string, options: HandlerOptions) => {
 
 export const addProject = async (project: Project, options: HandlerOptions) => {
     const metadata = await options.zeitClient.getMetadata();
+    metadata.projects = metadata.projects || [];
     metadata.projects = [ ...metadata.projects, { ...project, api: { name: project.api.name } } ];
     await options.zeitClient.setMetadata(metadata);
 };
 
 export const updateProject = async (project: Project, options: HandlerOptions) => {
     const metadata = await options.zeitClient.getMetadata();
+    metadata.projects = metadata.projects || [];
     metadata.projects = metadata.projects.filter(({id}: Project) => id !== project.id)
     metadata.projects = [ ...metadata.projects, { ...project, api: { name: project.api.name } } ];
     await options.zeitClient.setMetadata(metadata);
