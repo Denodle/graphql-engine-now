@@ -16,7 +16,7 @@ export const destroyDigitalocean = async (token: string, project: Project) => {
 
         const AllDroplets = await responseAllDroplets.json();
 
-        const projectID = AllDroplets.droplets.find((droplet: any) => droplet.name === 'Hasura-' + project.api.name).id;
+        const projectID = AllDroplets.droplets.find((droplet: any) => droplet.name === 'Hasura-' + project.id).id;
 
         await fetch(`${BASE_URL}/droplets/${projectID}`, {
             method: "DELETE",
