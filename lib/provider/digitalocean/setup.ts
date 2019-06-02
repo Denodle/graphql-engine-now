@@ -11,7 +11,7 @@ interface CreateConfig {
 export const setupDigitalocean = async (token: string, project: Project, config: CreateConfig) => {
 
     try {
-        const response = await fetch(`${BASE_URL}/droplets`, {
+        await fetch(`${BASE_URL}/droplets`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -24,8 +24,6 @@ export const setupDigitalocean = async (token: string, project: Project, config:
                 image: "hasura-18-04"
             })
         });
-        const json = await response.json();
-
         return true;
     } catch (e) {
         return false;

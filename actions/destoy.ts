@@ -8,8 +8,7 @@ export const destroy = async (project: Project, options: HandlerOptions) => {
         case 'Self hosted':
             break;
         case 'DigitalOcean':
-            const token = '';
-            await destroyDigitalocean(token, project);
+            await destroyDigitalocean(project.apiKey, project);
             break;
     }
 

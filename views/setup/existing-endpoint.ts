@@ -14,7 +14,7 @@ export const getSetupExistingView = async ({ payload, zeitClient }: HandlerOptio
         if (clientState.url === '' || clientState.secret === '' || clientState.project === ''){
             errors = 'Sorry, you have to enter all required information!';
         } else {
-            const project = { id: clientState.project, type: 'Self hosted', created: true, url: clientState.url, secret: clientState.secret, api: { name: '' } };
+            const project = { id: clientState.project, type: 'Self hosted', created: true, url: clientState.url, secret: clientState.secret, api: { name: '' }, apiKey: '' };
             return await setup(project, { payload, zeitClient }, {});
         }
 

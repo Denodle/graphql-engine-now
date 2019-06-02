@@ -1,5 +1,4 @@
 import { htm as html, HandlerOptions } from "@zeit/integration-utils";
-import { getListView } from "../list";
 import { Project } from "../../interfaces/Project";
 import { getSetupProviderView } from "./provider";
 
@@ -15,7 +14,7 @@ export const getSetupProviderApiView = async ({ payload, zeitClient }: HandlerOp
             errors = 'Sorry, you have to enter all required information!';
         } else {
             project = {...project, apiKey: clientState['api-key']};
-            
+
             const metadata = await zeitClient.getMetadata();
             metadata.projects = metadata.projects.filter(({id}: Project) => id !== project.id)
             metadata.projects = [...metadata.projects, project];
@@ -30,13 +29,16 @@ export const getSetupProviderApiView = async ({ payload, zeitClient }: HandlerOp
 
     return html`
         <Box>
+            ${errors !== '' ? html`<Notice type="error">${errors}</Notice>` : ''}
+
             <Fieldset>
                 <FsContent>
-                    <H1>2. Provider API key</H1>
+                    <H2>2. Configure provider</H2>
+                    <Box>
+                        Before creating a server, we need to be able to access your chosen provider.
+                    </Box>
                 </FsContent>
             </Fieldset>
-
-            ${errors !== '' ? html`<Notice type="error">${errors}</Notice>` : ''}
 
             <Fieldset>
                 <FsContent>
@@ -44,8 +46,11 @@ export const getSetupProviderApiView = async ({ payload, zeitClient }: HandlerOp
                     <Box marginBottom="10px">
                         Your API key provided by DigitalOcean.
                     </Box>
-                    <Input name="api-key" value="" />
+                    <Input name="api-key" value="" type="password" />
                 </FsContent>
+                <FsFooter>
+                    <P>This API key will be only used for this project.</P>
+                </FsFooter>
             </Fieldset>
 
             <Fieldset>

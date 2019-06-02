@@ -1,12 +1,28 @@
 import { htm as html, HandlerOptions } from "@zeit/integration-utils";
-import { getListView } from "../list";
 import { Project } from "../../interfaces/Project";
-import { setupDigitalocean } from "../../lib/provider/digitalocean/setup";
-import { listDbSizes, listRegions } from "../../lib/do-api/do-api";
+import { setup } from "../../actions/setup";
+import { regionsDigitalocean } from "../../lib/provider/digitalocean/regions";
+import { typesDigitalocean } from "../../lib/provider/digitalocean/types";
 
 export const getSetupProviderView = async ({ payload, zeitClient }: HandlerOptions, project: Project, submit: boolean = false) => {
 
     let errors = '';
+
+    let regions = [];
+    switch(project.type){
+        case 'DigitalOcean':
+            regions = await regionsDigitalocean(project.apiKey);
+            break;
+    }
+
+    let types: any = [];
+    switch (project.type) {
+        case 'DigitalOcean':
+            types = await typesDigitalocean(project.apiKey);
+            break;
+    }
+
+    console.log(regions, types);
 
     const providers = [
         {
@@ -14,24 +30,36 @@ export const getSetupProviderView = async ({ payload, zeitClient }: HandlerOptio
             html: html`
                 <Fieldset>
                     <FsContent>
-                        <H2>Choose your server size</H2>
-                        <Select name="size">
-                            ${listDbSizes().map(({slug, ram, cpu, storage}: any) => html`
-                                <Option value=${slug} caption=${ram +' RAM; '+ cpu +'; '+ storage} />
+                        <H2>Server type</H2>
+                        <Box marginBottom="10px">
+                            You will be able to change this later.
+                        </Box>
+                        <Select name="size" value=${types[0].slug || ''}>
+                            ${types.map(({slug, ram, cpu, storage}: any) => html`
+                                <Option value=${slug} caption=${ram +' RAM; '+ cpu +'vCPU; '+ storage+ 'GB'} />
                             `)}
                         </Select>
                     </FsContent>
+                    <FsFooter>
+                        <P>DigitalOcean charges different rates for every server type.</P>
+                    </FsFooter>
                 </Fieldset>
 
                 <Fieldset>
                     <FsContent>
-                        <H2>Choose your server region</H2>
-                        <Select name="size">
-                            ${(await listRegions(project.apiKey)).map(({name, slug}: any) => html`
+                        <H2>Region</H2>
+                        <Box marginBottom="10px">
+                            This is the region where your server will be hosted.
+                        </Box>
+                        <Select name="region" value=${regions.map(({ slug }: any) => slug)[0] || ''}>
+                            ${regions.map(({name, slug}: any) => html`
                                 <Option value=${slug} caption=${name} />
                             `)}
                         </Select>
                     </FsContent>
+                    <FsFooter>
+                        <P>Choose the one most closest to you for optimal latency.</P>
+                    </FsFooter>
                 </Fieldset>
             `,
         },
@@ -45,40 +73,32 @@ export const getSetupProviderView = async ({ payload, zeitClient }: HandlerOptio
 
         if (!provider) {
             errors = 'Provider not found!';
+        } else if (clientState.size === '' || clientState.region === '') {
+            errors = 'Sorry, you have to enter all required information!';
         } else {
-            switch (provider.name) {
-                case 'DigitalOcean':
-                    if (clientState.size === '' || clientState.region === '') {
-                        errors = 'Sorry, you have to enter all required information!';
-                    } else {
-                        // setupDigitalocean(project.api.key, project, {size: clientState.size, region: clientState.region});
-                    }
-                    break;
-            }
+            return await setup(project, { payload, zeitClient }, { size: clientState.size, region: clientState.region });
         }
 
-        if (errors === '') {
-            return getListView({ payload, zeitClient });
-        }
-
-        //errors = 'Sorry, we were not able to connect to your existing GraphQL Engine! Check entered data and try again.';
     }
 
     return html`
         <Box>
+            ${errors !== '' ? html`<Notice type="error">${errors}</Notice>` : ''}
+
             <Fieldset>
                 <FsContent>
-                    <H1>3. Configure server</H1>
+                    <H2>3. Configure server</H2>
+                    <Box>
+                        Choose the most appropriate settings for your new GraphQL Engine.
+                    </Box>
                 </FsContent>
             </Fieldset>
-
-            ${errors !== '' ? html`<Notice type="error">${errors}</Notice>` : ''}
 
             ${provider && provider.html}
 
             <Fieldset>
                 <FsContent>
-                    <Button action=${'provider-submit:' + project.id}>Setup server</Button>
+                    <Button action=${'provider-submit:' + project.id}>Create</Button>
                 </FsContent>
             </Fieldset>
         </Box>
