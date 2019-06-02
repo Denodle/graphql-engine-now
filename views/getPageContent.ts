@@ -7,7 +7,7 @@ import { getDashboardView } from "./dashboard";
 import { Project } from "../interfaces/Project";
 import { getProject } from "../lib/zeit";
 import { getShowSecretView } from "./show-secret";
-import { destroy } from "../actions/destoy";
+import { destroy } from "../actions/destroy";
 import { getSetupProviderView } from "./setup/provider";
 import { getSetupProviderApiView } from "./setup/provider-api";
 import { getShowFAQView } from "./show-faq";
