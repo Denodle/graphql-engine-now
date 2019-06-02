@@ -3,6 +3,7 @@ import { Project } from "../../../interfaces/Project";
 import { HandlerOptions } from "@zeit/integration-utils";
 import { updateProject } from "../../zeit";
 import { checkHealth } from "../../../checks/health";
+import { getUrl } from "../../url";
 
 const BASE_URL = "https://api.digitalocean.com/v2";
 
@@ -33,7 +34,7 @@ export const postSetupDigitalocean = async (project: Project, options: HandlerOp
 
             const newProject = { ...project, url: "http://" + droplet.networks['v4'][0].ip_address + "/", created: true };
 
-            const urlSecret = await options.zeitClient.ensureSecret('graphql-url', newProject.url);
+            const urlSecret = await options.zeitClient.ensureSecret('graphql-url', getUrl(newProject.url, 'v1/graphql'));
             await options.zeitClient.upsertEnv(project.id, `GRAPHQL_URL`, urlSecret);
 
             await updateProject(newProject, options);
