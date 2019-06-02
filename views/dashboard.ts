@@ -23,11 +23,11 @@ export const getDashboardView = async ({ payload, zeitClient }: HandlerOptions, 
                         display="flex"
                         marginBottom="15px"
                     >
-                        <H1>${project.api.name}</H1>
+                        <H2>Dashboard (${project.api.name})</H2>
                         <Box flex="1"></Box>
-                        <Button small action="">Back to endpoints</Button>
+                        <Button small secondary action="">Back to endpoints</Button>
                     </Box>
-                    <H2>Dashboard</H2>
+
                     <Box>
                         Here you can quickly access all required information and configure your endpoint. Also, we know that creating new GraphQL API can be intimidating, so we created a  <Link action=${'show-faq:' + project.id}>FAQ section</Link> to help you get started with your new API.
                     </Box>
