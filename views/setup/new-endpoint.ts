@@ -1,12 +1,13 @@
 import { htm as html, HandlerOptions } from "@zeit/integration-utils";
 import { Project } from "../../interfaces/Project";
 import { getSetupProviderApiView } from "./provider-api";
+import { listOfPossibleProjects } from "../../lib/zeit";
 
 export const getSetupNewView = async ({ payload, zeitClient }: HandlerOptions, submit: boolean = false) => {
 
     let errors = '';
 
-    const projects = await zeitClient.fetchAndThrow(`/v1/projects/list`, {});
+    const projects = await listOfPossibleProjects({ payload, zeitClient });
 
     const providers = [
         'DigitalOcean',
