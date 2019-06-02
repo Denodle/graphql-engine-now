@@ -44,7 +44,6 @@ export const providerFielsDigitalocean = async (token: string) => {
             </Fieldset>
         `;
     } catch (e) {
-        console.log('Fetch error: ', e.message);
         return '';
     }
 

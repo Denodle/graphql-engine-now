@@ -11,6 +11,7 @@ export const getSetupNewView = async ({ payload, zeitClient }: HandlerOptions, s
 
     const providers = [
         'DigitalOcean',
+        'Heroku',
     ];
 
     if(submit) {

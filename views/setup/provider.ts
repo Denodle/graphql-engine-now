@@ -9,6 +9,7 @@ export const getSetupProviderView = async ({ payload, zeitClient }: HandlerOptio
 
     const providers = [
         'DigitalOcean',
+        'Heroku',
     ];
 
     if(submit) {

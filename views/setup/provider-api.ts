@@ -41,7 +41,7 @@ export const getSetupProviderApiView = async ({ payload, zeitClient }: HandlerOp
                 <FsContent>
                     <H2>API key</H2>
                     <Box marginBottom="10px">
-                        Your API key provided by DigitalOcean.
+                        Your API key from provider.
                     </Box>
                     <Input name="api-key" value="" type="password" />
                 </FsContent>

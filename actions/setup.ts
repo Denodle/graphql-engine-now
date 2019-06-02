@@ -4,8 +4,24 @@ import { HandlerOptions } from "@zeit/integration-utils";
 import generator from 'generate-password';
 import { setupDigitalocean } from "../lib/provider/digitalocean/setup";
 import { updateProject, addProject } from "../lib/zeit";
+import { setupHeroku } from "../lib/provider/heroku/setup";
 
 export const setup = async (project: Project, options: HandlerOptions, config: any) => {
+
+    const setupProjectAdminSecret = async () => {
+        const adminSecret = generator.generate({
+            length: 16,
+            numbers: true,
+        });
+
+        const newProject = { ...project, secret: adminSecret };
+        await updateProject(newProject, options);
+
+        const passwordSecret = await options.zeitClient.ensureSecret('graphql-secret', adminSecret);
+        await options.zeitClient.upsertEnv(newProject.id, `GRAPHQL_SECRET`, passwordSecret);
+
+        return newProject;
+    }
 
     switch (project.type) {
         case 'Self hosted':
@@ -16,19 +32,13 @@ export const setup = async (project: Project, options: HandlerOptions, config: a
 
             await addProject(project, options);
             break;
-
         case 'DigitalOcean':
-            const adminSecret = generator.generate({
-                length: 16,
-                numbers: true,
-            });
-
-            const passwordSecretDO = await options.zeitClient.ensureSecret('graphql-secret', adminSecret);
-            await options.zeitClient.upsertEnv(project.id, `GRAPHQL_SECRET`, passwordSecretDO);
-            await setupDigitalocean(project.apiKey, project, config);
-
-            const newProject = { ...project, secret: adminSecret };
-            await updateProject(newProject, options);
+            const newProjectDO = await setupProjectAdminSecret();
+            await setupDigitalocean(newProjectDO.apiKey, newProjectDO, config);
+            break;
+        case 'Heroku':
+            const newProjectH = await setupProjectAdminSecret();
+            await setupHeroku(newProjectH.apiKey, newProjectH, config);
             break;
     }
 

@@ -3,25 +3,25 @@ import { Project } from "../../../interfaces/Project";
 import { HandlerOptions } from "@zeit/integration-utils";
 import { updateProject } from "../../zeit";
 
-const BASE_URL = "https://api.digitalocean.com/v2";
+const BASE_URL = "https://api.heroku.com";
 
-export const postSetupDigitalocean = async (project: Project, options: HandlerOptions) => {
+export const postSetupHeroku = async (project: Project, options: HandlerOptions) => {
 
     try {
-        const response = await fetch(`${BASE_URL}/droplets`, {
+        const response = await fetch(`${BASE_URL}/apps`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
+                Accept: "application/vnd.heroku+json; version=3",
                 Authorization: `Bearer ${project.apiKey}`
             }
         });
-        const { droplets } = await response.json();
+        const apps = await response.json();
 
-        const droplet = droplets.find((d: any) => d.name === 'Hasura-' + project.id);
+        const app = apps.find((a: any) => a.name.startsWith('hasura-' + project.api.name));
 
-        if(droplet && droplet.status === 'active'){
-
-            const newProject = { ...project, url: "http://" + droplet.networks['v4'][0].ip_address + "/", created: true };
+        if (app) {
+            const newProject = { ...project, url: app.web_url, created: true };
 
             const urlSecret = await options.zeitClient.ensureSecret('graphql-url', newProject.url);
             await options.zeitClient.upsertEnv(project.id, `GRAPHQL_URL`, urlSecret);
