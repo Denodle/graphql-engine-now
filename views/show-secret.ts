@@ -10,7 +10,7 @@ export const getShowSecretView = async ({ payload, zeitClient }: HandlerOptions,
               <Box marginBottom="10px">
                   This is your admin secret which enables you to access GraphQL Engine's console.
               </Box>
-              <Input value="123456789" disabled />
+              <Input value=${project.secret} disabled />
           </FsContent>
           <FsFooter>
             <P>Please keep this secret as it gives complete control over your database!</P>

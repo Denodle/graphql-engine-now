@@ -6,13 +6,17 @@ import { HandlerOptions } from "@zeit/integration-utils";
 export const destroy = async (project: Project, options: HandlerOptions) => {
     switch(project.type){
         case 'Self hosted':
-            // TODO: Implement
             break;
         case 'DigitalOcean':
             const token = '';
             await destroyDigitalocean(token, project);
             break;
     }
+
+    let metadata = await options.zeitClient.getMetadata();
+    metadata.projects = metadata.projects || [];
+    metadata.projects = metadata.projects.filter((p: Project) => project.id !== p.id);
+    await options.zeitClient.setMetadata(metadata);
 
     return getListView(options);
 }
