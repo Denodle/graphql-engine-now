@@ -17,7 +17,7 @@ export const getSetupProviderApiView = async ({ payload, zeitClient }: HandlerOp
 
             const metadata = await zeitClient.getMetadata();
             metadata.projects = metadata.projects.filter(({id}: Project) => id !== project.id)
-            metadata.projects = [...metadata.projects, project];
+            metadata.projects = [...metadata.projects, { ...project }];
             await zeitClient.setMetadata(metadata);
 
             return getSetupProviderView({ payload, zeitClient }, project);

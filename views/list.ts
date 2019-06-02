@@ -17,7 +17,7 @@ export const getListView = async ({ payload, zeitClient }: HandlerOptions) => {
     const projectInfoFromApi = await zeitClient.fetchAndThrow(`/v1/projects/${project.id}`, {});
     projects = [ ...projects, {...project, api: { ...projectInfoFromApi } } ]
     if(!project.created){
-      await postSetup({ ...project, api: { ...projectInfoFromApi } }, { payload, zeitClient });
+      await postSetup({ ...project, api: { name: projectInfoFromApi.name } }, { payload, zeitClient });
       shouldAddRefresher = true;
     }
   }
