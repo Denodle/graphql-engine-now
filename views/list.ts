@@ -3,21 +3,28 @@ import { Table, HeaderItem, TableRow, BodyItem } from "../components/Table";
 import { Header } from "../components/Header";
 import { Description } from "../components/Description";
 import { Project } from "../interfaces/Project";
+import { postSetup } from "../actions/post-setup";
 
 export const getListView = async ({ payload, zeitClient }: HandlerOptions) => {
 
   let metadata = await zeitClient.getMetadata();
   metadata.projects = metadata.projects || [];
+  let shouldAddRefresher = false;
 
   let projects: Project[] = [];
 
   for (let project of metadata.projects){
     const projectInfoFromApi = await zeitClient.fetchAndThrow(`/v1/projects/${project.id}`, {});
     projects = [ ...projects, {...project, api: { ...projectInfoFromApi } } ]
+    if(!project.created){
+      await postSetup({ ...project, api: { ...projectInfoFromApi } }, { payload, zeitClient });
+      shouldAddRefresher = true;
+    }
   }
 
   return html`
     <Box>
+    ${shouldAddRefresher ? html`<AutoRefresh timeout="3000" />` : ''}
       <Box display="flex" justifyContent="center" marginBottom="14px">
         <Box textAlign="center" maxWidth="550px">
           <${Header}>Endpoints</${Header}>

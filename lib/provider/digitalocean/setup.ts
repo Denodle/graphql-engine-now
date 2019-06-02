@@ -18,7 +18,7 @@ export const setupDigitalocean = async (token: string, project: Project, config:
                 Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
-                name: 'Hasura-' + project.api.name,
+                name: 'Hasura-' + project.id,
                 region: config.region,
                 size: config.size,
                 image: "hasura-18-04"
