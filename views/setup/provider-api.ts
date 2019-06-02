@@ -1,7 +1,7 @@
 import { htm as html, HandlerOptions } from "@zeit/integration-utils";
 import { Project } from "../../interfaces/Project";
 import { getSetupProviderView } from "./provider";
-import { updateProject } from "../../lib/zeit";
+import { setNewProject } from "../../lib/zeit";
 import { validateProvider } from "../../actions/validate-provider";
 
 export const getSetupProviderApiView = async ({ payload, zeitClient }: HandlerOptions, project: Project, submit: boolean = false) => {
@@ -18,9 +18,8 @@ export const getSetupProviderApiView = async ({ payload, zeitClient }: HandlerOp
             project = { ...project, apiKey: clientState['api-key'] };
 
             const validKey = await validateProvider(project);
-
             if(validKey){
-                await updateProject(project, { payload, zeitClient });
+                await setNewProject(project, { payload, zeitClient });
 
                 return getSetupProviderView({ payload, zeitClient }, project);
             } else {
@@ -61,7 +60,7 @@ export const getSetupProviderApiView = async ({ payload, zeitClient }: HandlerOp
 
             <Fieldset>
                 <FsContent>
-                    <Button action=${'provider-api-submit:' + project.id}>Next</Button>
+                    <Button action="provider-api-submit">Next</Button>
                 </FsContent>
             </Fieldset>
         </Box>

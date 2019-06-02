@@ -1,7 +1,7 @@
 import { htm as html, HandlerOptions } from "@zeit/integration-utils";
 import { Project } from "../../interfaces/Project";
 import { getSetupProviderApiView } from "./provider-api";
-import { listOfPossibleProjects, addProject } from "../../lib/zeit";
+import { listOfPossibleProjects, setNewProject } from "../../lib/zeit";
 
 export const getSetupNewView = async ({ payload, zeitClient }: HandlerOptions, submit: boolean = false) => {
 
@@ -24,12 +24,10 @@ export const getSetupNewView = async ({ payload, zeitClient }: HandlerOptions, s
             errors = 'Your chosen provider is invalid!';
         } else {
             const project: Project = { id: clientState.project, type: clientState.provider, created: false, api: { name: '' }, apiKey: '', url: '', secret: '' };
-            await addProject(project, { payload, zeitClient });
+            await setNewProject(project, { payload, zeitClient });
 
             return getSetupProviderApiView({ payload, zeitClient }, project);
         }
-
-        //errors = 'Sorry, we were not able to connect to your existing GraphQL Engine! Check entered data and try again.';
     }
 
     return html`

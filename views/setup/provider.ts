@@ -43,7 +43,7 @@ export const getSetupProviderView = async ({ payload, zeitClient }: HandlerOptio
 
             <Fieldset>
                 <FsContent>
-                    <Button action=${'provider-submit:' + project.id}>Create</Button>
+                    <Button action="provider-submit">Create</Button>
                 </FsContent>
             </Fieldset>
         </Box>

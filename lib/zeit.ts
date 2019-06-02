@@ -37,6 +37,18 @@ export const destroyProject = async (id: string, options: HandlerOptions) => {
     await options.zeitClient.setMetadata(metadata);
 }
 
+export const setNewProject = async (project: Project, options: HandlerOptions) => {
+    const metadata = await options.zeitClient.getMetadata();
+    metadata.newProject = { ...project, api: { name: project.api.name } };
+    await options.zeitClient.setMetadata(metadata);
+};
+
+export const getNewProject = async (options: HandlerOptions) => {
+    const metadata = await options.zeitClient.getMetadata();
+    const projectInfoFromApi = await options.zeitClient.fetchAndThrow(`/v1/projects/${metadata.newProject.id}`, {});
+    return { ...metadata.newProject, api: { name: projectInfoFromApi.name } };
+};
+
 export const listOfPossibleProjects = async (options: HandlerOptions) => {
     const allProjects = await options.zeitClient.fetchAndThrow(`/v1/projects/list`, {});
     const metadata = await options.zeitClient.getMetadata();

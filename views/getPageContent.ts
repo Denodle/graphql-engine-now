@@ -5,7 +5,7 @@ import { getSetupNewView } from "./setup/new-endpoint";
 import { getSetupExistingView } from "./setup/existing-endpoint";
 import { getDashboardView } from "./dashboard";
 import { Project } from "../interfaces/Project";
-import { getProject } from "../lib/zeit";
+import { getProject, getNewProject } from "../lib/zeit";
 import { getShowSecretView } from "./show-secret";
 import { destroy } from "../actions/destroy";
 import { getSetupProviderView } from "./setup/provider";
@@ -43,20 +43,6 @@ export const getPageContent = async (options: HandlerOptions) => {
     return await destroy(project, options);
   }
 
-  if(action.startsWith('provider-submit:')){
-    const projectId = action.substring(16);
-    const project: Project = await getProject(projectId, options);
-
-    return await getSetupProviderView(options, project, true);
-  }
-
-  if(action.startsWith('provider-api-submit:')){
-    const projectId = action.substring(20);
-    const project: Project = await getProject(projectId, options);
-
-    return await getSetupProviderApiView(options, project, true);
-  }
-
   switch(action){
     case 'setup-initial':
       return await getSetupInitialView(options);
@@ -68,6 +54,10 @@ export const getPageContent = async (options: HandlerOptions) => {
         return await getSetupExistingView(options);
     case 'setup-existing-endpoint-submit':
         return await getSetupExistingView(options, true);
+    case 'provider-api-submit':
+        return await getSetupProviderApiView(options, await getNewProject(options), true);
+    case 'provider-submit':
+        return await getSetupProviderView(options, await getNewProject(options), true);
     default:
       return await getListView(options);
   }
