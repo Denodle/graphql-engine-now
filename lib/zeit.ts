@@ -15,3 +15,12 @@ export const getProject = async (id: string, options: HandlerOptions) => {
     return null;
 
 }
+
+export const listOfPossibleProjects = async (options: HandlerOptions) => {
+    const allProjects = await options.zeitClient.fetchAndThrow(`/v1/projects/list`, {});
+    const metadata = await options.zeitClient.getMetadata();
+    const addedProjects = metadata.projects || [];
+
+    return allProjects.filter((p: any) => !addedProjects.find((ap: any) => ap.id === p.id));
+};
+

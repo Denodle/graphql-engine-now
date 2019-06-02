@@ -1,11 +1,12 @@
 import { htm as html, HandlerOptions } from "@zeit/integration-utils";
 import { setup } from "../../actions/setup";
+import { listOfPossibleProjects } from "../../lib/zeit";
 
 export const getSetupExistingView = async ({ payload, zeitClient }: HandlerOptions, submit: boolean = false) => {
 
     let errors = '';
 
-    const projects = await zeitClient.fetchAndThrow(`/v1/projects/list`, {});
+    const projects = await listOfPossibleProjects({ payload, zeitClient });
 
     if(submit) {
 

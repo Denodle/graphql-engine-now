@@ -52,7 +52,7 @@ export const getPageContent = async (options: HandlerOptions) => {
 
   switch(action){
     case 'setup-initial':
-      return await getSetupInitialView();
+      return await getSetupInitialView(options);
     case 'setup-new-endpoint':
         return await getSetupNewView(options);
     case 'setup-new-endpoint-submit':
