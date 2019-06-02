@@ -2,6 +2,7 @@ import fetch from "node-fetch";
 import { Project } from "../../../interfaces/Project";
 import { HandlerOptions } from "@zeit/integration-utils";
 import { updateProject } from "../../zeit";
+import { checkHealth } from "../../../checks/health";
 
 const BASE_URL = "https://api.heroku.com";
 
@@ -19,6 +20,15 @@ export const postSetupHeroku = async (project: Project, options: HandlerOptions)
         const apps = await response.json();
 
         const app = apps.find((a: any) => a.name.startsWith('hasura-' + project.api.name));
+
+        if (app){
+            const newProject = { ...project, url: app.web_url };
+            const health = await checkHealth(newProject);
+
+            if(!health){
+                return false;
+            }
+        }
 
         if (app) {
             const newProject = { ...project, url: app.web_url, created: true };

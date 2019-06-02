@@ -1,14 +1,15 @@
 import fetch from "node-fetch";
 
-const BASE_URL = "https://api.digitalocean.com/v2";
+const BASE_URL = "https://api.heroku.com";
 
-export const validateKeyDigitalocean = async (token: string) => {
+export const validateKeyHeroku = async (token: string) => {
 
     try {
-        const response = await fetch(`${BASE_URL}/sizes`, {
+        const response = await fetch(`${BASE_URL}/account`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
+                Accept: "application/vnd.heroku+json; version=3",
                 Authorization: `Bearer ${token}`
             }
         });
